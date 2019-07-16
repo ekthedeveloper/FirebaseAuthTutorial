@@ -16,6 +16,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public class RegisterActivity extends AppCompatActivity{
     private FirebaseAuth mAuth;
     private EditText usernameET, passwordET;
@@ -41,12 +44,39 @@ public class RegisterActivity extends AppCompatActivity{
                 }else {
                     String email = usernameET.getText().toString().trim();
                     String pass = passwordET.getText().toString().trim();
+
+                    String md5_hash_password = md5(pass);
+                    String md5_hash_email = md5(email);
+
+                    System.out.println(md5_hash_email);
+                    System.out.println(md5_hash_password);
+
                     register(email, pass);
+
+
                 }
             }
         });
 
 
+    }
+    public String md5(String s) {
+        try {
+            // Create MD5 Hash
+            MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
+            digest.update(s.getBytes());
+            byte messageDigest[] = digest.digest();
+
+            // Create Hex String
+            StringBuffer hexString = new StringBuffer();
+            for (int i=0; i<messageDigest.length; i++)
+                hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
+
+            return hexString.toString();
+        }catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     private void register(String email, String pass){
